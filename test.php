@@ -37,6 +37,17 @@ test(
     time(),
 );
 
+// TODO
+test(
+    $array[1 + 0],
+    $array[1],
+    $array[2 - 1],
+    $function(),
+    $function(1 + 1),
+    $function(1),
+    $function(2 - 2),
+);
+
 test(
     $array ?: 1,
     $array[time()] ?? 1,
