@@ -5,7 +5,7 @@ icon: 'M20 8h-2.81c-.45-.8-1.07-1.5-1.82-2L17 4.41L15.59 3l-2.17 2.17a6.002 6.00
 color: '#4f5b93'
 author: Taufik Nurrohman
 type: Markdown
-version: 1.0.0
+version: 1.0.1
 ...
 
 This extension contains `abort()` and `test()` functions that were previously available in the core application. They
