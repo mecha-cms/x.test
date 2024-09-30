@@ -16,8 +16,8 @@ test(
     $array['a'],
     $array['a'][0],
     $array[1],
-    $function,
     $function(1, 'a', true, array(false, time())),
+    $function,
     $object,
     $object->a,
     $string,
@@ -30,9 +30,11 @@ test(
     [1, 2, 3],
     [],
     false,
+    new DateTime,
     new stdClass,
     null,
     true,
+    time(),
 );
 
 test(
