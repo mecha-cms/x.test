@@ -14,74 +14,55 @@ namespace {
     }
     function test(...$lot) {
         $content = "";
+        $deep = 0;
+        $key = 0;
         $keys = [];
         $trace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
-        $at = $trace['line'] ?? 0;
-        $file = $trace['file'] ?? "";
-        $z = \implode("\n", \array_slice(\file($file, \FILE_IGNORE_NEW_LINES), $at - 1));
-        $z = \preg_split('/\b(?=test\s*\()/', $z, 2)[1]; // Ignore any code before `test()` in the current line
-        $open = 0;
-        foreach (\token_get_all((0 === \strpos($z, '<?php') ? "" : '<?php ') . $z) as $v) {
-            $var = '$' === (\end($keys)[0] ?? 0);
+        $trace_at = $trace['line'] ?? 0;
+        $trace_file = $trace['file'] ?? "";
+        $z = \implode("\n", \array_slice(\file($trace_file, \FILE_IGNORE_NEW_LINES), $trace_at - 1));
+        $z = \preg_split('/\btest\s*\(/i', $z, 2)[1];
+        foreach (\array_slice(\token_get_all('<?php ' . $z), 1) as $v) {
+            $value = $keys[$key] ?? "";
             if (\is_array($v)) {
-                if (\T_ARRAY === $v[0] && $var) {
-                    $keys[\count($keys) - 1] .= $v[1];
-                    continue;
-                }
                 if (\T_CLOSE_TAG === $v[0]) {
                     break; // End of function call
                 }
-                if (\T_CONSTANT_ENCAPSED_STRING === $v[0] || \T_DNUMBER === $v[0] || \T_LNUMBER === $v[0] || \T_STRING === $v[0]) {
-                    if ($var && false !== \strpos('(,>[ ', \substr(\end($keys), -1))) {
-                        $keys[\count($keys) - 1] .= $v[1];
-                        continue;
-                    }
-                    $keys[] = $v[1];
+                if (\T_COMMENT === $v[0] || \T_DOC_COMMENT === $v[0] || \T_WHITESPACE === $v[0]) {
                     continue;
                 }
-                if (\T_OBJECT_OPERATOR === $v[0] && $var) {
-                    $keys[\count($keys) - 1] .= $v[1];
-                    continue;
-                }
-                if (\T_VARIABLE === $v[0]) {
-                    $keys[] = $v[1];
-                    continue;
-                }
+                $keys[$key] = $value . $v[1];
                 continue;
             }
             if ('(' === $v) {
-                if ($var) {
-                    $keys[\count($keys) - 1] .= $v;
+                $deep += 1;
+            } else if (')' === $v) {
+                $deep -= 1;
+                if ($deep < 0) {
+                    continue;
                 }
-                $open += 1;
-                continue;
             }
-            if (')' === $v) {
-                if ($var && $open > 1) {
-                    $keys[\count($keys) - 1] .= $v;
-                }
-                $open -= 1;
-                continue;
-            }
-            if ($var && ('[' === $v || ']' === $v)) {
-                $keys[\count($keys) - 1] .= $v;
-                continue;
-            }
-            if (',' === $v) {
-                if ($open > 1 && $var) {
-                    $keys[\count($keys) - 1] .= $v . ' ';
-                }
-                continue;
-            }
-            if ($var && $open) {
-                $keys[\count($keys) - 1] = null; // Mixed variable and value
-                continue;
+            if (',' === $v && $deep <= 0) {
+                $key += 1;
+                $value = $v = "";
             }
             if (';' === $v) {
                 break; // End of function call
             }
+            $keys[$key] = $value . $v;
         }
-        \array_shift($keys); // Drop function name
+        foreach ($keys as $k => $v) {
+            if ('$' === ($v[0] ?? 0)) {
+                if (false !== \strpos($v, '->') && \preg_match('/^[$][a-z_]\w*(->[a-z_]\w*)+$/i', $v)) {
+                    continue;
+                }
+                if (\strlen($v) !== \strcspn($v, '(+-:?')) {
+                    $keys[$k] = null; // Do not display mixed variable(s)
+                }
+                continue;
+            }
+            $keys[$k] = null; // Do not display non-variable(s)
+        }
         foreach (\array_values($lot) as $k => $v) {
             $dent = "";
             $v = \z($v, true);
@@ -121,7 +102,7 @@ namespace {
                 }
                 $value .= $vv;
             }
-            if ($var = '$' === ($keys[$k][0] ?? 0)) {
+            if ($var = $keys[$k] ?? 0) {
                 $value = \substr_replace($value, $keys[$k] . ' = ', 6, 0) . ';';
             }
             $v = \strip_tags(\highlight_string($value, true), '<br><span>');
@@ -131,7 +112,7 @@ namespace {
             $v = '<span style="background:' . ($var ? '0 0' : '#ffe') . ';border:0 ' . (0 === $k ? 'solid' : 'dotted') . ' #000;border-top-width:1px;border-radius:0;box-shadow:none;color:#000;display:block;margin:0;overflow:auto;padding:.5em .75em;text-shadow:none;white-space:pre;">' . $v . '</span>';
             $content .= $v;
         }
-        echo \x\test\_(true, \strtr($file, [\PATH . \D => '.' . \D]) . '(' . $at . '): test()', $content, ['#000', '#000', '#fff', '#ff9', '#000']);
+        echo \x\test\_(true, \strtr($trace_file, [\PATH . \D => '.' . \D]) . '(' . $trace_at . '): test()', $content, ['#000', '#000', '#fff', '#ff9', '#000']);
     }
     if (\defined("\\TEST") && 'x.test' === \TEST && \is_file($test = __DIR__ . \D . 'test.php')) {
         require $test;
