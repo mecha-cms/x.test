@@ -24,5 +24,10 @@ if (version_compare(PHP_VERSION, '7.3.0', '<')) {
 
 ~~~ .php
 test($_COOKIE, $_REQUEST, $_SERVER, $_SESSION);
+
+test(time(), new DateTime);
+
+test('a', 1, 1.0, INF, NAN, false, null, true);
+
 exit;
 ~~~
