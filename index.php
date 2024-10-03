@@ -52,16 +52,10 @@ namespace {
             $keys[$key] = $value . $v;
         }
         foreach ($keys as $k => $v) {
-            if ('$' === ($v[0] ?? 0)) {
-                if (false !== \strpos($v, '->') && \preg_match('/^[$][a-z_]\w*(->[a-z_]\w*)+$/i', $v)) {
-                    continue;
-                }
-                if (\strlen($v) !== \strcspn($v, '(+-:?')) {
-                    $keys[$k] = null; // Do not display mixed variable(s)
-                }
-                continue;
+            $v = \strtr($v, ['->' => ""]); // Ignore `->` from the pattern test
+            if ('$' !== ($v[0] ?? 0) || \strlen($v) !== \strcspn($v, '%(*+,-:=?')) {
+                $keys[$k] = null; // Do not display non-variable(s) and mixed variable(s)
             }
-            $keys[$k] = null; // Do not display non-variable(s)
         }
         foreach (\array_values($lot) as $k => $v) {
             $dent = "";

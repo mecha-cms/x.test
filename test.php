@@ -13,6 +13,7 @@ $string = 'a';
 
 test(
     $array,
+    $array[$array['a']],
     $array['a'],
     $array['a'][0],
     $array[1],
@@ -20,6 +21,9 @@ test(
     $function,
     $object,
     $object->a,
+    $object->a[0],
+    $object->{'1'},
+    $object->{1},
     $string,
     'a',
     (object) [],
@@ -30,10 +34,15 @@ test(
     [1, 2, 3],
     [],
     false,
-    new DateTime,
-    new stdClass,
     null,
     true,
+);
+
+test(
+    new DateTime(),
+    new DateTime,
+    new stdClass(),
+    new stdClass,
     time(),
 );
 
