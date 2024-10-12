@@ -9,7 +9,7 @@ namespace {
             $v = \trim(\strstr($v, ' '));
         }
         unset($v);
-        echo \x\test\_(true, $alert, '<pre style="background:0 0;border:0 solid #000;border-top-width:1px;border-radius:0;box-shadow:none;color:inherit;display:flex;font:inherit;margin:0;padding:0;text-shadow:none;white-space:pre;"><span style="background:#eee;padding:.5em .75em;user-select:none;">' . \implode("\n", \range(1, \count($trace))) . '</span><span style="flex:1;overflow:auto;padding:.5em .75em;">' . \implode("\n", \array_reverse($trace)) . '</span></pre>', ['#000', '#000', '#fff', '#fc9', '#000']);
+        echo \x\test\_(true, $alert, '<pre style="background:0 0;border:0 solid #000;border-top-width:1px;border-radius:0;box-shadow:none;color:inherit;display:flex;font:inherit;margin:0;padding:0;text-align:left;text-shadow:none;white-space:pre;"><span style="background:#eee;padding:.5em .75em;text-align:right;user-select:none;">' . \implode("\n", \range(1, \count($trace))) . '</span><span style="flex:1;overflow:auto;padding:.5em .75em;">' . \implode("\n", \array_reverse($trace)) . '</span></pre>', ['#000', '#000', '#fff', '#fc9', '#000']);
         $exit && exit;
     }
     function test(...$lot) {
@@ -116,6 +116,6 @@ namespace {
 namespace x\test {
     function _($open, $summary, $body, $color) {
         $id = \uniqid();
-        return '<details aria-describedby="alert-content:' . $id . '" aria-labelledby="alert-title:' . $id . '" id="alert:' . $id . '" ' . ($open ? ' open' : "") . ' role="alert" style="background:' . $color[2] . ';border:2px solid ' . $color[1] . ';border-radius:0;box-shadow:none;color:' . $color[0] . ';font:100%/1.25 monospace;margin:1px 0;padding:0;text-shadow:none;"><summary id="alert-title:' . $id . '" style="background:' . $color[3] . ';border:0;border-radius:0;box-shadow:none;color:' . $color[4] . ';cursor:pointer;display:block;font:inherit;margin:0;padding:.5em .75em;text-shadow:none;user-select:none;">' . $summary . '</summary><div id="alert-content:' . $id . '">' . $body . '</div></details>';
+        return '<details aria-describedby="alert-content:' . $id . '" aria-labelledby="alert-title:' . $id . '" id="alert:' . $id . '" ' . ($open ? ' open' : "") . ' role="alert" style="background:' . $color[2] . ';border:2px solid ' . $color[1] . ';border-radius:0;box-shadow:none;color:' . $color[0] . ';font:100%/1.25 monospace;margin:1px 0;padding:0;text-align:left;text-shadow:none;"><summary id="alert-title:' . $id . '" style="background:' . $color[3] . ';border:0;border-radius:0;box-shadow:none;color:' . $color[4] . ';cursor:pointer;display:block;font:inherit;margin:0;padding:.5em .75em;text-shadow:none;user-select:none;">' . $summary . '</summary><div id="alert-content:' . $id . '">' . $body . '</div></details>';
     }
 }
