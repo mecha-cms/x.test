@@ -1,5 +1,7 @@
 <?php
 
+abort('Lorem ipsum <a href="/">dolor</a> sit amet.', false);
+
 $array = [];
 $array['a'] = 'a';
 $array[1] = 1;
